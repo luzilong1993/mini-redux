@@ -31,7 +31,7 @@
             }
         }
 
-        function reducer(state,action) {
+        function counterReducer(state,action) {
             switch (action.type) {
                 case 'increment':
                     return state + 1;
@@ -41,20 +41,34 @@
                     state;
             }
         }
+        
+        var rootReducer = combineReducers({
+            counter: counterReducer
+        })
+        
         // 创建store
-        var store = createStore(reducer, 0, applyMiddleware(logger,thunk));
+        var store = createStore(rootReducer, {counter: 0}, applyMiddleware(logger,thunk));
         // console.log(store);
 
         store.subscribe(function() {
             // 获取最新状态
             console.log(store.getState());
-            document.getElementById('box').innerHTML = store.getState();
+            document.getElementById('box').innerHTML = store.getState().counter;
         })
 
+
+        var actions = bindActionCreators({increment,decrement},store.dispatch);
+
+        function increment() {
+            return {type: 'increment'}
+        }
+        function decrement() {
+            return {type: 'decrement'}
+        }
         // 获取+按钮
         document.getElementById('increment').onclick = function() {
             // 触发action
-            store.dispatch({type: 'increment'})
+            // store.dispatch({type: 'increment'})
 
             // enhancer
             // store.dispatch(function(dispatch) {
@@ -62,12 +76,18 @@
             //         dispatch({type: 'increment'})
             //     },1000)
             // })
+
+            // bindActionCreators
+            actions.increment()
         }
 
         // 获取-按钮
         document.getElementById('decrement').onclick = function() {
             // 触发action
-            store.dispatch({type: 'decrement'})
+            // store.dispatch({type: 'decrement'})
+
+            // bindActionCreators
+            actions.decrement()
         }
 
         console.log(store.getState());

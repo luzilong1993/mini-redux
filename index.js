@@ -97,3 +97,39 @@ function compose() {
         return dispatch
     }
 }
+
+function bindActionCreators(actionCreators, dispatch) {
+    var boundActionCreators = {};
+    for (var key in actionCreators) {
+        (function (key) {
+            boundActionCreators[key] = function () {
+                dispatch(actionCreators[key]())
+            }
+        })(key)
+    }
+
+    return boundActionCreators
+}
+
+function combineReducers (reducers) {
+    // 1. 检查reducer类型必须是函数
+    var reducerKeys = Object.keys(reducers);
+    for(var i = 0;i< reducerKeys.length;i++) {
+        var key = reducerKeys[i];
+        if (typeof reducers[key] !== 'function') throw new Error('reducer必须是函数');
+        
+    }
+    // 2. 调用一个一个的小的reducer，将每一个小的reducer中返回的的状态存储在一个大的对象中
+    return function(state,action) {
+        var nextState = {};
+        for(var i = 0;i < reducerKeys.length;i++) {
+            var key = reducerKeys[i];
+            var reducer = reducers[key];
+            var previousStateForKey = state[key];
+            nextState[key] = reducer(previousStateForKey,action);
+        }
+
+        console.log(nextState);
+        return nextState;
+    }
+}
