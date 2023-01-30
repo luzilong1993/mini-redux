@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="increment">+</button>
+    <span id="box">0</span>
+    <button id="decrement">-</button>
+    <script src="./index.js"></script>
+    <script>
+
+        function reducer(state,action) {
+            switch (action.type) {
+                case 'increment':
+                    return state + 1;
+                case 'decrement': 
+                    return state - 1;
+                default:
+                    state;
+            }
+        }
+        // 创建store
+        var store = createStore(reducer, 0);
+
+        store.subscribe(function() {
+            // 获取最新状态
+            console.log(store.getState());
+            document.getElementById('box').innerHTML = store.getState();
+        })
+
+        // 获取+按钮
+        document.getElementById('increment').onclick = function() {
+            // 触发action
+            store.dispatch({type: 'increment'})
+        }
+
+        // 获取-按钮
+        document.getElementById('decrement').onclick = function() {
+            // 触发action
+            store.dispatch({type: 'decrement'})
+        }
+
+        console.log(store.getState());
+    </script>
+</body>
+</html>
