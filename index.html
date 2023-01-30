@@ -12,6 +12,22 @@
     <button id="decrement">-</button>
     <script src="./index.js"></script>
     <script>
+        function enhancer(createStore) {
+            return function(reducer,preloadedState) {
+                var store = createStore(reducer,preloadedState);
+                var dispatch = store.dispatch;
+                function _dispatch(action) {
+                    if(typeof action ==='function') {
+                        return action(dispatch);
+                    }
+                    dispatch(dispatch)
+                }
+                return {
+                    ...store,
+                    dispatch: _dispatch
+                };
+            }
+        }
 
         function reducer(state,action) {
             switch (action.type) {
@@ -24,7 +40,8 @@
             }
         }
         // 创建store
-        var store = createStore(reducer, 0);
+        var store = createStore(reducer, 0,enhancer);
+        console.log(store);
 
         store.subscribe(function() {
             // 获取最新状态
@@ -35,7 +52,12 @@
         // 获取+按钮
         document.getElementById('increment').onclick = function() {
             // 触发action
-            store.dispatch({type: 'increment'})
+            // store.dispatch({type: 'increment'})
+            store.dispatch(function(dispatch) {
+                setTimeout(() => {
+                    dispatch({type: 'increment'})
+                },1000)
+            })
         }
 
         // 获取-按钮
