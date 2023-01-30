@@ -64,3 +64,36 @@ function isPlainObject(obj) {
     }
     return Object.getPrototypeOf(obj) === proto
 }
+
+// applyMiddleware
+function applyMiddleware(...middlewares) {
+    return function (createStore) {
+        return function (reducer, preloadedState) {
+            // 创建store
+            var store = createStore(reducer, preloadedState);
+            // 阉割版的store
+            var middlewareAPI = {
+                getState: store.getState,
+                dispatch: store.dispatch
+            }
+
+            // 调用中间件的第一层函数， 传递阉割版的store对象
+            var chain = middlewares.map(middleware => middleware(middlewareAPI));
+            var dispatch = compose(...chain)(dispatch);
+            return {
+                ...store,
+                dispatch
+            }
+        }
+    }
+}
+
+function compose() {
+    var funcs = [...arguments];
+    return function (dispatch) {
+        for (var i = funcs.length - 1; i >= 0; i--) {
+            dispatch = funcs[i](dispatch);
+        }
+        return dispatch
+    }
+}

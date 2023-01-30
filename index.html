@@ -11,6 +11,8 @@
     <span id="box">0</span>
     <button id="decrement">-</button>
     <script src="./index.js"></script>
+    <script src="./middlewares/logger.js"></script>
+    <script src="./middlewares/thunk.js"></script>
     <script>
         function enhancer(createStore) {
             return function(reducer,preloadedState) {
@@ -40,7 +42,7 @@
             }
         }
         // 创建store
-        var store = createStore(reducer, 0,enhancer);
+        var store = createStore(reducer, 0, applyMiddleware(logger,thunk));
         console.log(store);
 
         store.subscribe(function() {
@@ -52,12 +54,14 @@
         // 获取+按钮
         document.getElementById('increment').onclick = function() {
             // 触发action
-            // store.dispatch({type: 'increment'})
-            store.dispatch(function(dispatch) {
-                setTimeout(() => {
-                    dispatch({type: 'increment'})
-                },1000)
-            })
+            store.dispatch({type: 'increment'})
+
+            // enhancer
+            // store.dispatch(function(dispatch) {
+            //     setTimeout(() => {
+            //         dispatch({type: 'increment'})
+            //     },1000)
+            // })
         }
 
         // 获取-按钮
