@@ -79,7 +79,7 @@ function applyMiddleware(...middlewares) {
 
             // 调用中间件的第一层函数， 传递阉割版的store对象
             var chain = middlewares.map(middleware => middleware(middlewareAPI));
-            var dispatch = compose(...chain)(dispatch);
+            var dispatch = compose(...chain)(store.dispatch);
             return {
                 ...store,
                 dispatch

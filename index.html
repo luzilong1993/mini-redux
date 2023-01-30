@@ -43,7 +43,7 @@
         }
         // 创建store
         var store = createStore(reducer, 0, applyMiddleware(logger,thunk));
-        console.log(store);
+        // console.log(store);
 
         store.subscribe(function() {
             // 获取最新状态
